@@ -1,27 +1,30 @@
 from kivy.app import App
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
+from plyer import camera
+from pathlib import Path
 
 
-class LoginScreen(GridLayout):
+class CameraApp(App):
 
-    def __init__(self, **kwargs):
-        super(LoginScreen, self).__init__(**kwargs)
-        self.cols = 2
-        self.add_widget(Label(text='User Name'))
-        self.username = TextInput(multiline=False)
-        self.add_widget(self.username)
-        self.add_widget(Label(text='password'))
-        self.password = TextInput(password=True, multiline=False)
-        self.add_widget(self.password)
+    def tirar_foto(self, instance):
+        arquivo = str(Path.home() / "foto_teste.jpg")
 
+        camera.take_picture(
+            filename=arquivo,
+            on_complete=self.foto_salva
+        )
 
-class MyApp(App):
+    def foto_salva(self, caminho):
+        if caminho:
+            print(f"Foto salva em: {caminho}")
+        else:
+            print("Foto cancelada.")
 
     def build(self):
-        return LoginScreen()
+        return Button(
+            text="Abrir Câmera",
+            on_press=self.tirar_foto
+        )
 
 
-if __name__ == '__main__':
-    MyApp().run()
+CameraApp().run()
